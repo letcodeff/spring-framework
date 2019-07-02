@@ -647,14 +647,17 @@ public class BeanDefinitionParserDelegate {
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			// <meta key="special-data" value="sprecial stragey" />
+			//提取meta
 			if (isCandidateElement(node) && nodeNameEquals(node, META_ELEMENT)) { // 标签名为 meta
 				Element metaElement = (Element) node;
 				String key = metaElement.getAttribute(KEY_ATTRIBUTE); // key
 				String value = metaElement.getAttribute(VALUE_ATTRIBUTE); // value
                 // 创建 BeanMetadataAttribute 对象
+				//使用key、value构造BeanMetadataAttribute
 				BeanMetadataAttribute attribute = new BeanMetadataAttribute(key, value);
 				attribute.setSource(extractSource(metaElement));
 				// 添加到 BeanMetadataAttributeAccessor 中
+				//记录信息
 				attributeAccessor.addMetadataAttribute(attribute);
 			}
 		}

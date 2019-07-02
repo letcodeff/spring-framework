@@ -72,6 +72,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * of when looking more closely at a particular
 	 * {@link org.springframework.beans.factory.parsing.ComponentDefinition},
 	 * but not when looking at the overall configuration of an application.
+	 * 角色-支持
+	 * 做为大量配置的一部分（支持、扩展类） ，通常是外部的
 	 */
 	int ROLE_SUPPORT = 1;
 
