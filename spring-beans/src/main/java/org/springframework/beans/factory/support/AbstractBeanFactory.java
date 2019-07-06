@@ -191,10 +191,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param name the name of the bean to retrieve
      *                要获取 Bean 的名字
 	 * @param requiredType the required type of the bean to retrieve
-     *                要获取 Bean 的类型
+     *                要获取 Bean 的类型 比如明明是String的，就要Integer
 	 * @param args arguments to use when creating a bean instance using explicit arguments
 	 * (only applied when creating a new instance as opposed to retrieving an existing one)
-     *                创建 Bean 时传递的参数。这个参数仅限于创建 Bean 时使用。
+     *                创建 Bean 时传递的参数。这个参数仅限于创建 Bean 时使用。比如xml中配置的属性
 	 * @param typeCheckOnly whether the instance is obtained for a type check,
 	 * not for actual use
      *                是否需要进行类型检查
@@ -235,6 +235,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
             // 如果当前容器中没有找到，则从父类容器中加载
 			// Check if bean definition exists in this factory.
 			BeanFactory parentBeanFactory = getParentBeanFactory();
+			//父类容器不为空，并且当前容器的beanDefinitionMap不包含beanName这个key
 			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
 				// Not found -> check parent.
 				String nameToLookup = originalBeanName(name);
@@ -1006,9 +1007,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 */
 	protected boolean isPrototypeCurrentlyInCreation(String beanName) {
 		Object curVal = this.prototypesCurrentlyInCreation.get();
-		return (curVal != null &&
-				(curVal.equals(beanName)  // 相等
-                        || (curVal instanceof Set && ((Set<?>) curVal).contains(beanName)))); // 包含
+		return (curVal != null && (curVal.equals(beanName)  || (curVal instanceof Set && ((Set<?>) curVal).contains(beanName)))); // 包含
 	}
 
 	/**
@@ -1600,6 +1599,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd) {
         // 若为工厂类引用（name 以 & 开头）
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
+		//这里判断 name是不是以&开头，不是经过处理的beanName  并且这个bean实例 不是FactoryBean类型的
+		//如果是&开头 并且不是FactoryBean类型 则抛出异常
 		if (BeanFactoryUtils.isFactoryDereference(name)) {
             // 如果是 NullBean，则直接返回
 			if (beanInstance instanceof NullBean) {
@@ -1613,13 +1614,16 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
         // 到这里我们就有了一个 Bean 实例，当然该实例可能是会是是一个正常的 bean 又或者是一个 FactoryBean
         // 如果是 FactoryBean，我我们则创建该 Bean
+		//不是FactoryBean类型 或者name以&开头 直接返回bean实例
+		//想一下我们关于FactoryBean的知识：如果要根据beanName获取真正的FactoryBean实例的时候
+		//需要在beanName前面加上&  这里就可以看到为什么要这样做了。
 		// Now we have the bean instance, which may be a normal bean or a FactoryBean.
 		// If it's a FactoryBean, we use it to create a bean instance, unless the
 		// caller actually wants a reference to the factory.
 		if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
 			return beanInstance;
 		}
-
+        //是FactoryBean创建的Bean
 		Object object = null;
         // 若 BeanDefinition 为 null，则从缓存中加载 Bean 对象
 		if (mbd == null) {
