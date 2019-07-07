@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.tests.sample.beans.TestBean;
 import org.w3c.dom.Element;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -121,4 +122,10 @@ public class EventPublicationTests {
 		assertTrue(importDefinition.getSource() instanceof Element);
 	}
 
+	@Test
+	public void testBean() throws Exception {
+		TestBean rod = (TestBean) this.beanFactory.getBean("testBean");
+		System.out.println(rod);
+
+	}
 }

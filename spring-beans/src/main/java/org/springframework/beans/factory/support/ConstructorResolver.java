@@ -460,7 +460,7 @@ class ConstructorResolver {
             // 检索所有方法，这里是对方法进行过滤
 			List<Method> candidateList = new ArrayList<>();
 			for (Method candidate : rawCandidates) {
-                // 如果有static 且为工厂方法，则添加到 candidateSet 中
+                // 如果有static 且为工厂方法，factory-method="getTestBean" 则添加到 candidateSet 中
 				if (Modifier.isStatic(candidate.getModifiers()) == isStatic && mbd.isFactoryMethod(candidate)) {
 					candidateList.add(candidate);
 				}
@@ -559,10 +559,9 @@ class ConstructorResolver {
 						}
 					}
 
-                    // isLenientConstructorResolution 判断解析构造函数的时候是否以宽松模式还是严格模式
-                    // 严格模式：解析构造函数时，必须所有的都需要匹配，否则抛出异常
-                    // 宽松模式：使用具有"最接近的模式"进行匹配
-                    // typeDiffWeight：类型差异权重
+                    // isLenientConstructorResolution 判断解析构造函数的时候是否以宽松模式还是严格模式，默认是宽松模式
+                    // 严格模式：解析构造函数时，必须所有的都需要匹配，否则抛出异常 比如参数个数，参数类型等全都一样
+                    // 宽松模式：使用具有"最接近的模式"进行匹配 比如参数类型本来是int，但是却传了个String的，也可以。                    // typeDiffWeight：类型差异权重
 					int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 							argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
 					// Choose this factory method if it represents the closest match.
