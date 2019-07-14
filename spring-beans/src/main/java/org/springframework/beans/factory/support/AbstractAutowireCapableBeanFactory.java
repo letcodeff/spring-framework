@@ -1337,7 +1337,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// state of the bean before properties are set. This can be used, for example,
 		// to support styles of field injection.
 		boolean continueWithPropertyPopulation = true;
-		if (!mbd.isSynthetic()  // bean 不是"合成"的，即未由应用程序本身定义
+		if (!mbd.isSynthetic()  // bean 不是"合成"的，即未由应用程序本身定义 synthetic默认是false(不是组装的)，!mbd.isSynthetic()为true
                 && hasInstantiationAwareBeanPostProcessors()) { // 是否持有 InstantiationAwareBeanPostProcessor
             // 迭代所有的 BeanPostProcessors
             for (BeanPostProcessor bp : getBeanPostProcessors()) {
@@ -1422,7 +1422,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			checkDependencies(beanName, mbd, filteredPds, pvs);
 		}
 
-        // 将属性应用到 bean 中
+        // 将属性注入到 bean 的属性中
 		if (pvs != null) {
 			applyPropertyValues(beanName, mbd, bw, pvs);
 		}
@@ -1438,7 +1438,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param pvs the PropertyValues to register wired objects with
 	 */
 	protected void autowireByName(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
-        // 对 Bean 对象中非简单属性
+        // 对 Bean 对象中非简单属性,就是属性是对象，而不是简单的int,long那些
 		String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
 		// 遍历 propertyName 数组
 		for (String propertyName : propertyNames) {
@@ -1489,7 +1489,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 遍历 propertyName 数组
 		for (String propertyName : propertyNames) {
 			try {
-                // 获取 PropertyDescriptor 实例
+                // 获取 PropertyDescriptor 实例 属性描述
 				PropertyDescriptor pd = bw.getPropertyDescriptor(propertyName);
 				// Don't try autowiring by type for type Object: never makes sense,
 				// even if it technically is a unsatisfied, non-simple property.

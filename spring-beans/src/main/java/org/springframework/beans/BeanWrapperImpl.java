@@ -207,15 +207,18 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	@Nullable
 	public Object convertForProperty(@Nullable Object value, String propertyName) throws TypeMismatchException {
 		CachedIntrospectionResults cachedIntrospectionResults = getCachedIntrospectionResults();
+		//属性描述符 属性的的get和set方法 setAge getAge
 		PropertyDescriptor pd = cachedIntrospectionResults.getPropertyDescriptor(propertyName);
 		if (pd == null) {
 			throw new InvalidPropertyException(getRootClass(), getNestedPath() + propertyName,
 					"No property '" + propertyName + "' found");
 		}
+		//属性的类型描述符，age是int型的
 		TypeDescriptor td = cachedIntrospectionResults.getTypeDescriptor(pd);
 		if (td == null) {
 			td = cachedIntrospectionResults.addTypeDescriptor(pd, new TypeDescriptor(property(pd)));
 		}
+		//value现在是“34”，字符串型的，需要转换为int型的
 		return convertForProperty(propertyName, null, value, td);
 	}
 
@@ -243,6 +246,10 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 				matches.buildErrorMessage(), matches.getPossibleMatches());
 	}
 
+	/**
+	 * 获取属性描述，里边有bean的get和set方法
+	 * @return
+	 */
 	@Override
 	public PropertyDescriptor[] getPropertyDescriptors() {
 		return getCachedIntrospectionResults().getPropertyDescriptors();
@@ -275,6 +282,11 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 			return ResolvableType.forMethodReturnType(this.pd.getReadMethod());
 		}
 
+		/**
+		 * 类型描述
+		 * 比如age是int型的
+		 * @return
+		 */
 		@Override
 		public TypeDescriptor toTypeDescriptor() {
 			return new TypeDescriptor(property(this.pd));
@@ -309,6 +321,11 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 			}
 		}
 
+		/**
+		 * 依赖注入最终调用的方法
+		 * @param value
+		 * @throws Exception
+		 */
 		@Override
 		public void setValue(final @Nullable Object value) throws Exception {
 			final Method writeMethod = (this.pd instanceof GenericTypeAwarePropertyDescriptor ?

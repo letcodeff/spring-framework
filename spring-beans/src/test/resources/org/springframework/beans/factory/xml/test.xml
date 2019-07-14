@@ -52,7 +52,7 @@
 		<!-- Should inherit age -->
 	</bean>
 
-	<bean id="kerry" class="org.springframework.tests.sample.beans.TestBean">
+	<bean id="kerry" class="org.springframework.tests.sample.beans.TestBean" autowire="byName">
 		<property name="name"><value>Ker<!-- a comment -->ry</value></property>
 		<property name="age"><value>34</value></property>
 		<property name="spouse"><ref bean="rod"/></property>
