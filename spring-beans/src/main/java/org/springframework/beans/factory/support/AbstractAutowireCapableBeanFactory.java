@@ -554,7 +554,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Object exposedObject = bean;
 		try {
             // 对 bean 进行填充，将各个属性值注入，其中，可能存在依赖于其他 bean 的属性
-            // 则会递归初始依赖 bean
+            // 则会递归初始化依赖 bean
 			populateBean(beanName, mbd, instanceWrapper);
             // 调用初始化方法
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
@@ -1699,7 +1699,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			} else {
 				String propertyName = pv.getName();
 				Object originalValue = pv.getValue(); // 原始的属性值，即转换之前的属性值
-				Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue); // 转换属性值，例如将引用转换为IoC容器中实例化对象引用 ！！！！！ 对属性值的解析！！
+				// 核心逻辑，解析获取实际的值
+				// 对于RuntimeReference，会解析拿到具体的beanName,最终通过getBean(beanName)拿到具体的对象
+				// 转换属性值，例如将引用转换为IoC容器中实例化对象引用 ！！！！！ 对属性值的解析！！
+				Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
 				Object convertedValue = resolvedValue; // 转换之后的属性值
 				boolean convertible = bw.isWritableProperty(propertyName) &&
 						!PropertyAccessorUtils.isNestedOrIndexedProperty(propertyName);  // 属性值是否可以转换
