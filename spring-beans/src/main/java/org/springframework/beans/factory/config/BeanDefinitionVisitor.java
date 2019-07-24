@@ -141,7 +141,7 @@ public class BeanDefinitionVisitor {
 		PropertyValue[] pvArray = pvs.getPropertyValues();
 		// 遍历 PropertyValue 数组
 		for (PropertyValue pv : pvArray) {
-		    // 解析真
+		    // 解析真值
 			Object newVal = resolveValue(pv.getValue());
 			if (!ObjectUtils.nullSafeEquals(newVal, pv.getValue())) {
 			    // 设置到 PropertyValue 中

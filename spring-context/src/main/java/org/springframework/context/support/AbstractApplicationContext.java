@@ -911,7 +911,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		publishEvent(new ContextRefreshedEvent(this));
 
 		// Participate in LiveBeansView MBean, if active.
-        // TODO 芋艿，后续看 MBean 相关。
+        // 后续看 MBean 相关。
 		LiveBeansView.registerApplicationContext(this);
 	}
 
